@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>Welcome to the Pet Directory</h1>
+    <p>Find your new furever friend.</p>
+
+    <div>
+        <a href="{% url 'pet_list' %}" class="btn btn-primary">Browse Pets</a>
+        <a href="{% url 'shelter_list' %}" class="btn btn-primary">View Shelters</a>
+    </div>
+{% endblock %}

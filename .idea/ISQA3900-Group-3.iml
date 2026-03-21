@@ -6,5 +6,10 @@
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
+    <option name="TEMPLATE_FOLDERS">
+      <list>
+        <option value="$MODULE_DIR$/pet_directory_app/templates" />
+      </list>
+    </option>
   </component>
 </module>
