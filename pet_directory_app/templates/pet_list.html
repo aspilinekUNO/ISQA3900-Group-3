@@ -1,7 +1,87 @@
 {% extends "base.html" %}
 
-{% block title %}Pets{% endblock %}
+{% block title %}All Pets{% endblock %}
 
 {% block content %}
+<h1 class="mb-4">Available Pets</h1>
+
+<form method="get" class="mb-4">
+    <div class="row g-3 align-items-center">
+        <!-- species filter -->
+        <div class="col-auto">
+            <label for="species" class="col-form-label">Filter by species:</label>
+        </div>
+
+        <div class="col-auto">
+            <select name="species" id="species" class="form-select" onchange="this.form.submit()">
+                <option value="">All Species</option>
+                {% for s in species_list %}
+                    <option value="{{ s.id }}" {% if selected_species == s.id|stringformat:"s" %}selected{% endif %}>
+                        {{ s.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Age filter -->
+        <div class="col-auto">
+            <label for="age" class="col-form-label">Age:</label>
+        </div>
+        <div class="col-auto">
+            <select name="age" id="age" class="form-select" onchange="this.form.submit()">
+                <option value="">All Ages</option>
+                <option value="baby" {% if selected_age == "baby" %}selected{% endif %}>Baby (0–11 mo)</option>
+                <option value="young" {% if selected_age == "young" %}selected{% endif %}>Young (1–2 yrs)</option>
+                <option value="adult" {% if selected_age == "adult" %}selected{% endif %}>Adult (3–6 yrs)</option>
+                <option value="senior" {% if selected_age == "senior" %}selected{% endif %}>Senior (7+ yrs)</option>
+            </select>
+        </div>
+    
+        <!-- Shelter filter -->
+        <div class="col-auto">
+            <label for="shelter" class="col-form-label">Shelter:</label>
+        </div>
+
+        <div class="col-auto">
+            <select name="shelter" id="shelter" class="form-select" onchange="this.form.submit()">
+                <option value="">All Shelters</option>
+                {% for sh in shelter_list %}
+                    <option value="{{ sh.id }}" {% if selected_shelter == sh.id|stringformat:"s" %}selected{% endif %}>
+                        {{ sh.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+</form>
+
+{% if pets %}
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for pet in pets %}
+        <div class="col">
+            <div class="card h-100 pet-card">
+                <div class="pet-card-img-container">
+                    {% if pet.photo %}
+                        <img src="{{ pet.photo.url }}" class="card-img-top pet-card-img" alt="{{ pet.name }}">
+                    {% else %}
+                        <img src="https://placehold.co/600x400?text=No+Image&font=roboto" class="card-img-top pet-card-img" alt="No image">
+                    {% endif %}
+                </div>
+
+                <div class="card-body text-center pet-card-body">
+                    <div class="pet-card-info">
+                        <h5 class="card-title">{{ pet.name }}</h5>
+                        <a href="{% url 'pet_detail' pet.id %}" class="btn btn-primary btn-sm mt-1">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-muted mt-4">No pets found for this species.</p>
+{% endif %}
 
 {% endblock %}

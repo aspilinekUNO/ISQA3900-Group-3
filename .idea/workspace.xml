@@ -2,11 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc418291-ee43-4553-9068-040d11ee3df3" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/ISQA3900-Group-3.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ISQA3900-Group-3.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet_directory_app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/pet_directory_app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet_directory_app/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/pet_directory_app/static/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet_directory_app/templates/pet_list.html" beforeDir="false" afterPath="$PROJECT_DIR$/pet_directory_app/templates/pet_list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet_directory_app/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/pet_directory_app/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pet_directory_app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/pet_directory_app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet_directory_project/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/pet_directory_project/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pet_directory_project/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/pet_directory_project/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet_photos/IMG_20231211_001954015.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/media/pet_photos/IMG_20231211_001954015.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pet_photos/IMG_20251023_220157837.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/media/pet_photos/IMG_20251023_220157837.jpg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,8 +23,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="CSS File" />
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -33,24 +39,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;ai.playground.ignore.import.keys.banner.in.settings&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/akin7/OneDrive/Desktop/3900ISQA/ISQA3900-Group-3&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.language&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Django Server.ISQA3900-Group-3.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Notification.DisplayName-DoNotAsk-DatabaseConfigFileWatcher.found": "New/updated database configurations found",
+    "Notification.DoNotAsk-DatabaseConfigFileWatcher.found": "true",
+    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "ai.playground.ignore.import.keys.banner.in.settings": "true",
+    "django.template.preview.state": "SHOW_EDITOR",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "C:/Users/akin7/OneDrive/Desktop/3900ISQA/ISQA3900-Group-3",
+    "list.type.of.created.stylesheet": "CSS",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "configurable.group.language",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\akin7\OneDrive\Desktop\3900ISQA\ISQA3900-Group-3\media" />
+    </key>
+  </component>
   <component name="RunManager" selected="Django Server.ISQA3900-Group-3">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="ISQA3900-Group-3" />
@@ -83,6 +98,7 @@
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="pet_directory_project.settings" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="" />
@@ -120,7 +136,10 @@
       <workItem from="1772748131870" duration="1962000" />
       <workItem from="1773893457520" duration="3936000" />
       <workItem from="1773972229302" duration="6021000" />
-      <workItem from="1774068169518" duration="899000" />
+      <workItem from="1774068169518" duration="12274000" />
+      <workItem from="1774156419008" duration="845000" />
+      <workItem from="1774295467489" duration="40000" />
+      <workItem from="1774295694701" duration="1853000" />
     </task>
     <servers />
   </component>

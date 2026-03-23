@@ -17,6 +17,26 @@ class Pet(models.Model):
     def __str__(self):
         return self.name
 
+    def age_in_years(self):
+        years = self.age // 12
+        months = self.age % 12
+
+        parts = []
+
+        if years:
+            year_label = "year" if years == 1 else "years"
+            parts.append(f"{years} {year_label}")
+
+        if months:
+            month_label = "month" if months == 1 else "months"
+            parts.append(f"{months} {month_label}")
+
+        # If age is 0 months (unlikely, but safe)
+        if not parts:
+            return "0 months"
+
+        return ", ".join(parts)
+
 class Species(models.Model):
     name = models.CharField(max_length=100, unique=True)
     category = models.CharField(max_length=100, blank=True) # mammal, reptile, etc

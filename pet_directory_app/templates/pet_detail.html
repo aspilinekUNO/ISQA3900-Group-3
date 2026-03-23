@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}{{ pet.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="row">
+        <!-- photo -->
+        <div class="col-md-5">
+            {% if pet.photo %}
+                <img src="{{ pet.photo.url }}" class="img-fluid rounded" alt="{{ pet.name }}">
+            {% else %}
+                <img src="https://placehold.co/600x400?text=No+Image&font=roboto" class="img-fluid rounded" alt="No image">
+            {% endif %}
+        </div>
+
+        <!-- info -->
+        <div class="col-md-7">
+            <h2>{{ pet.name }}</h2>
+            <p class="text-muted">{{ pet.species.name }}</p>
+
+            <ul class="list-group mb-3">
+                <li class="list-group-item"><strong>Age:</strong> {{ pet.age_in_years }}</li>
+                <li class="list-group-item"><strong>Breed:</strong> {{ pet.breed }}</li>
+                <li class="list-group-item"><strong>Color:</strong> {{ pet.color }}</li>
+                <li class="list-group-item"><strong>Size:</strong> {{ pet.size }}</li>
+                <li class="list-group-item"><strong>Status:</strong> {{ pet.adoption_status }}</li>
+            </ul>
+
+            <a href="#" class="btn btn-outline-primary mb-3">View Medical Records</a>
+
+            <h5>Description</h5>
+            <p>{{ pet.description }}</p>
+
+            <hr>
+
+            <h5>Shelter Information</h5>
+            <p>
+                <strong>{{ pet.shelter.name }}</strong><br>
+                {{ pet.shelter.address }}<br>
+                {{ pet.shelter.city }}, {{ pet.shelter.state }} {{ pet.shelter.zip_code }}<br>
+                <strong>Phone:</strong> {{ pet.shelter.phone }}<br>
+                <strong>Hours:</strong> {{ pet.shelter.hours }}
+            </p>
+
+            <a href="{% url 'pet_list' %}" class="btn btn-secondary mt-3">Back to Pets</a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,3 +1,42 @@
 body {
    background-color: lightblue;
 }
+
+.pet-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: none;
+}
+
+.pet-card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+    background-color: #ffecec;
+}
+
+.pet-card-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pet-card-img-container {
+    height: 350px;
+    display: flex;
+    align-items: center; /* vertical centering */
+    justify-content: center; /* horizontal centering */
+    overflow: hidden; /* crop tall images */
+    border-top-left-radius: 0.375rem; /* match Bootstrap card radius */
+    border-top-right-radius: 0.375rem;
+}
+
+.pet-card-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 0 !important;
+}
