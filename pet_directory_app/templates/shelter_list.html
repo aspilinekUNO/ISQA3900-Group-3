@@ -3,5 +3,55 @@
 {% block title %}Shelters{% endblock %}
 
 {% block content %}
-    
+<div class="container mt-4">
+    <h1 class="mb-4">Our Shelters</h1>
+
+    {% if shelter_list %}
+        {% for shelter in shelter_list %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h4>{{ shelter.name }}</h4>
+
+                <p>
+                    {{ shelter.address_ln_1 }}<br>
+                    {% if shelter.address_ln_2 %}
+                        {{ shelter.address_ln_2 }}<br>
+                    {% endif %}
+                    {{ shelter.city }}, {{ shelter.state }} {{ shelter.zip_code }}
+                </p>
+
+                {% if shelter.phone %}
+                    <p><strong>Phone:</strong> {{ shelter.phone }}</p>
+                {% endif %}
+
+                {% if shelter.email %}
+                    <p><strong>Email:</strong> {{ shelter.email }}</p>
+                {% endif %}
+
+                {% if shelter.website %}
+                    <p><strong>Website:</strong>
+                        <a href="{{ shelter.website }}" target="_blank">{{ shelter.website }}</a>
+                    </p>
+                {% endif %}
+
+                {% if shelter.visiting_hours %}
+                    <p><strong>Visiting Hours:</strong><br>{{ shelter.visiting_hours|linebreaks }}</p>
+                {% endif %}
+
+                {% comment %} Admin buttons: only show if logged in staff {% endcomment %}
+                {% if user.is_staff %}
+                    <a href="{% url 'shelter_update' shelter.id %}" class="btn btn-warning btn-sm me-2">Edit</a>
+                    <a href="{% url 'shelter_delete' shelter.id %}" class="btn btn-danger btn-sm">Delete</a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No shelters found.</p>
+    {% endif %}
+
+    {% if user.is_staff %}
+        <a href="{% url 'shelter_create' %}" class="btn btn-primary mt-3">Add New Shelter</a>
+    {% endif %}
+</div>
 {% endblock %}
