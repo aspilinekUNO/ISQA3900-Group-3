@@ -9,5 +9,8 @@
     <div>
         <a href="{% url 'pet_list' %}" class="btn btn-primary">Browse Pets</a>
         <a href="{% url 'shelter_list' %}" class="btn btn-primary">View Shelters</a>
+        {% if user.is_staff %}
+        <a href="{% url 'pet_create' %}" class="btn btn-primary">Add New Pet</a>
+        {% endif %}
     </div>
 {% endblock %}

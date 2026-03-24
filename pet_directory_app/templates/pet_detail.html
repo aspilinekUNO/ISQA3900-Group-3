@@ -28,7 +28,9 @@
                 <li class="list-group-item"><strong>Status:</strong> {{ pet.adoption_status }}</li>
             </ul>
 
-            <a href="#" class="btn btn-outline-primary mb-3">View Medical Records</a>
+            <a href="{% url 'pet_medical_records' pet.id %}" class="btn btn-outline-primary mb-3">
+    View Medical Records
+</a>
 
             <h5>Description</h5>
             <p>{{ pet.description }}</p>
@@ -41,10 +43,19 @@
                 {{ pet.shelter.address }}<br>
                 {{ pet.shelter.city }}, {{ pet.shelter.state }} {{ pet.shelter.zip_code }}<br>
                 <strong>Phone:</strong> {{ pet.shelter.phone }}<br>
-                <strong>Hours:</strong> {{ pet.shelter.hours }}
+                <strong>Hours:</strong> {{ pet.shelter.visiting_hours }}
             </p>
 
             <a href="{% url 'pet_list' %}" class="btn btn-secondary mt-3">Back to Pets</a>
+
+
+            {% if user.is_staff %}
+            <div class="mb-3">
+                <a href="{% url 'pet_update' pet.id %}" class="btn btn-warning me-2">Edit Pet</a>
+
+                <a href="{% url 'pet_delete' pet.id %}" class="btn btn-danger">Delete Pet</a>
+            </div>
+            {% endif %}
         </div>
     </div>
 
