@@ -2,31 +2,11 @@
 
 {% block title %}Home{% endblock %}
 
-{% block content %}
-    <h1>Welcome to the Pet Directory</h1>
-    <p>Find your new furever friend.</p>
-
-    <div>
-        <a href="{% url 'pet_list' %}" class="btn btn-primary">Browse Pets</a>
-        <a href="{% url 'shelter_list' %}" class="btn btn-primary">View Shelters</a>
-        {% if user.is_staff %}
-        <a href="{% url 'pet_create' %}" class="btn btn-primary">Add New Pet</a>
-        {% endif %}
-    </div>
-{% endblock %}
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pet Adoption Directory</title>
-<link rel="stylesheet" href="styles.css">
+{% block extra_css %}
 <style>
 /* Landing page specific styles */
 .landing-hero {
-    background-image: url('https://unsplash.com/photos/a-golden-retriever-sitting-on-a-sandy-beach-FTbC150wV8Q');
+    background-image: url('https://images.unsplash.com/photo-FTbC150wV8Q');
     background-size: cover;
     background-position: center;
     height: 80vh;
@@ -61,11 +41,6 @@
     margin-bottom: 2rem;
 }
 
-.landing-hero .btn {
-    font-size: 1.1rem;
-    padding: 0.8rem 1.5rem;
-}
-
 .featured-pets {
     padding: 4rem 2rem;
     background-color: #f7f9fc;
@@ -83,7 +58,6 @@
     gap: 2rem;
 }
 
-/* About section */
 .about-section {
     padding: 4rem 2rem;
     text-align: center;
@@ -98,20 +72,13 @@
     max-width: 700px;
     margin: 0 auto;
     color: #555;
-    font-size: 1rem;
 }
 
-/* CTA section */
 .cta-section {
     background-color: #4CAF50;
     color: #fff;
     text-align: center;
     padding: 3rem 2rem;
-}
-
-.cta-section h2 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
 }
 
 .cta-section .btn {
@@ -125,86 +92,64 @@
     background-color: #e0f7e0;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
-    .landing-hero h1 {
-        font-size: 2rem;
-    }
-
-    .landing-hero p {
-        font-size: 1rem;
-    }
+    .landing-hero h1 { font-size: 2rem; }
+    .landing-hero p { font-size: 1rem; }
 }
 </style>
-</head>
-<body>
+{% endblock %}
 
-<header>
-    <h1>Pet Adoption Directory</h1>
-    <nav>
-        <a href="#featured">Featured Pets</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-    </nav>
-</header>
-
+{% block content %}
 
 <section class="landing-hero">
     <div class="landing-hero-content">
         <h1>Find Your Perfect Companion</h1>
-        <p>Search for adoptable pets by species, breed, age, and location. Make a furry friend today!</p>
-        <a href="#featured" class="btn">Browse Pets</a>
+        <p>Search for adoptable pets by species, breed, age, and location.</p>
+        <a href="{% url 'pet_list' %}" class="btn btn-light">Browse Pets</a>
     </div>
 </section>
-
 
 <section class="featured-pets" id="featured">
     <h2>Featured Pets</h2>
     <div class="pet-grid">
         <div class="pet-card">
-            <img src="https://www.alamy.com/golden-retriever-bitch-3-years-old-standing-on-a-stubble-field-image66574249.html" alt="Dog">
+            <img src="https://th.bing.com/th/id/R.9003028d7ec6ff58a70a2be15a05ffed?rik=9cLEFO6s9oiGeg&riu=http%3a%2f%2fwww.publicdomainpictures.net%2fpictures%2f40000%2fvelka%2fgolden-retriever-dog-1364426710r9x.jpg&ehk=Z8ZK9mRUJe0rT61EYByfWPUGg1BEToYpGPK3bCz1aTU%3d&risl=&pid=ImgRaw&r=0" alt="Dog">
             <div class="pet-info">
                 <h3>Buddy</h3>
                 <p>3-year-old Golden Retriever</p>
                 <span class="status available">Available</span>
             </div>
         </div>
+
         <div class="pet-card">
-            <img src="https://www.alamy.com/afghan-hound-5-months-image554506329.html" alt="Dog">
+            <img src="https://th.bing.com/th/id/R.4fa4c3a835d1e41e34227df1ca6ca01b?rik=TKacV5kOmuZJSA&pid=ImgRaw&r=0" alt="Dog">
             <div class="pet-info">
                 <h3>Luna</h3>
-                <p>5-Month Afghan Hound</p>
+                <p>5-month-old Afghan Hound</p>
                 <span class="status pending">Pending</span>
             </div>
         </div>
+
         <div class="pet-card">
-            <img src="https://www.alamy.com/chihuahua-dog-1-year-old-standing-against-white-background-image222804388.html" alt="Dog">
+            <img src="https://c2.staticflickr.com/6/5266/5597083289_b330aa27b0_b.jpg" alt="Dog">
             <div class="pet-info">
                 <h3>Thumper</h3>
-                <p>1-year-Chihuahua</p>
+                <p>1-year-old Chihuahua</p>
                 <span class="status adopted">Adopted</span>
             </div>
         </div>
     </div>
 </section>
 
-
 <section class="about-section" id="about">
     <h2>About Us</h2>
-    <p>Our mission is to connect loving families with pets in need. We partner with verified shelters and adoption organizations to ensure every pet finds a safe and happy home.</p>
+    <p>Our mission is to connect loving families with pets in need.</p>
 </section>
-
 
 <section class="cta-section" id="contact">
     <h2>Ready to Adopt?</h2>
     <p>Create an account and start your journey to find your new best friend.</p>
-    <a href="#" class="btn">Sign Up</a>
+    <a href="/" class="btn btn-light">Sign Up</a>
 </section>
 
-
-<footer>
-    <p>&copy; 2026 Pet Adoption Directory. All rights reserved.</p>
-</footer>
-</body>
-</html>
-
+{% endblock %}
