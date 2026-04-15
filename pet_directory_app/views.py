@@ -4,6 +4,7 @@ from .models import MedicalRecord
 from django.shortcuts import redirect
 from .forms import PetForm
 from .forms import ShelterForm
+from django.contrib.auth.forms import UserCreationForm
 def index(request):
     return render(request, "index.html")
 
@@ -119,3 +120,14 @@ def shelter_delete(request, pk):
         shelter.delete()
         return redirect("shelter_list")
     return render(request, "shelter_confirm_delete.html", {"shelter": shelter})
+
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'register.html', {'form': form})

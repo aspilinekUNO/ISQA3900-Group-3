@@ -33,6 +33,16 @@
                     <a class="nav-link" href="{% url 'shelter_list' %}">Shelters</a>
                 </li>
             </ul>
+            {% if user.is_authenticated %}
+                <p class="text-white me-3 mb-0">Welcome, {{ user.username }}!</p>
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link nav-link d-inline p-0" style="color:white;">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
         </div>
     </div>
 </nav>
