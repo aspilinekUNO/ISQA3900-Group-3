@@ -135,3 +135,6 @@ STATICFILES_DIRS = [
 ]
 # WhiteNoise (recommended with DEBUG=False)
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'

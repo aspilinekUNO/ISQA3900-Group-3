@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
+from .views import register
 
 urlpatterns = [
     path('', views.index, name="index"),
@@ -13,5 +15,8 @@ urlpatterns = [
     path("shelters/add/", views.shelter_create, name="shelter_create"),
     path("shelters/<int:pk>/edit/", views.shelter_update, name="shelter_update"),
     path("shelters/<int:pk>/delete/", views.shelter_delete, name="shelter_delete"),
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('register/', register, name='register'),
 
 ]
