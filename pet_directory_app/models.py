@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Pet(models.Model):
     name = models.CharField(max_length=100)
@@ -71,3 +72,7 @@ class MedicalRecord(models.Model):
 
     def __str__(self):
         return f"{self.pet_id.name} - {self.date}"
+
+class ShelterAdminProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)

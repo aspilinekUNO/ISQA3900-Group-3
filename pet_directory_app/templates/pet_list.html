@@ -71,7 +71,7 @@
                 <div class="card-body text-center pet-card-body">
                     <div class="pet-card-info">
                         <h5 class="card-title">{{ pet.name }}</h5>
-                        <a href="{% url 'pet_detail' pet.id %}" class="btn btn-primary btn-sm mt-1">
+                        <a href="{% url 'pet_detail' pet.id %}" class="btn btn-custom btn-sm mt-1">
                             View Details
                         </a>
                     </div>
@@ -82,6 +82,10 @@
     </div>
 {% else %}
     <p class="text-muted mt-4">No pets found for this species.</p>
+{% endif %}
+
+{% if user.is_staff %}
+    <a href="{% url 'pet_create' %}" class="btn btn-custom mt-3">Add New Pet</a>
 {% endif %}
 
 {% endblock %}

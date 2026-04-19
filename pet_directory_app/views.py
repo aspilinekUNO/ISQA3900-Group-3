@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from .forms import PetForm
 from .forms import ShelterForm
 from django.contrib.auth.forms import UserCreationForm
+from django.http import HttpResponseForbidden
 def index(request):
     return render(request, "index.html")
 
@@ -71,6 +72,10 @@ def pet_create(request):
 def pet_update(request, pk):
     pet = get_object_or_404(Pet, pk=pk)
 
+    if request.user.groups.filter(name="Shelter Admin").exists():
+        if pet.shelter != request.user.shelteradminprofile.shelter:
+            return HttpResponseForbidden("You cannot edit pets from another shelter.")
+
     if request.method == "POST":
         form = PetForm(request.POST, request.FILES, instance=pet)
         if form.is_valid():
@@ -84,6 +89,10 @@ def pet_update(request, pk):
 
 def pet_delete(request, pk):
     pet = get_object_or_404(Pet, pk=pk)
+
+    if request.user.groups.filter(name="Shelter Admin").exists():
+        if pet.shelter != request.user.shelteradminprofile.shelter:
+            return HttpResponseForbidden("You cannot delete pets from another shelter.")
 
     if request.method == "POST":
         pet.delete()
@@ -104,6 +113,9 @@ def shelter_create(request):
 
 def shelter_update(request, pk):
     shelter = get_object_or_404(Shelter, pk=pk)
+    if request.user.groups.filter(name="Shelter Admin").exists():
+        if shelter != request.user.shelteradminprofile.shelter:
+            return HttpResponseForbidden("You cannot edit another shelter.")
     if request.method == "POST":
         form = ShelterForm(request.POST, instance=shelter)
         if form.is_valid():
@@ -116,6 +128,9 @@ def shelter_update(request, pk):
 
 def shelter_delete(request, pk):
     shelter = get_object_or_404(Shelter, pk=pk)
+    if request.user.groups.filter(name="Shelter Admin").exists():
+        if shelter != request.user.shelteradminprofile.shelter:
+            return HttpResponseForbidden("You cannot delete another shelter.")
     if request.method == "POST":
         shelter.delete()
         return redirect("shelter_list")

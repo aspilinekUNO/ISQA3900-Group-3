@@ -51,7 +51,6 @@ body {
 }
 
 body {
-    background-color: #f7f9fc;
     color: #333;
     line-height: 1.6;
 }
@@ -209,7 +208,7 @@ main {
 }
 
 
-button, .btn {
+.btn-custom {
     display: inline-block;
     background-color: #4CAF50;
     color: #fff;
@@ -220,10 +219,13 @@ button, .btn {
     transition: background-color 0.3s ease;
 }
 
-button:hover, .btn:hover {
+.btn-custom:hover {
     background-color: #45a049;
 }
 
+.btn {
+    border: 2px solid black;
+}
 
 footer {
     background-color: #333;
