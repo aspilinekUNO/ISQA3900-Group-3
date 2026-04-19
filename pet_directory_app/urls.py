@@ -22,4 +22,6 @@ urlpatterns = [
     path("pets/<int:pk>/contact/", views.contact_shelter, name="contact_shelter"),
     path("manage-users/", views.user_management, name="user_management"),
     path("manage-users/delete/<int:user_id>/", views.delete_user, name="delete_user"),
+    path("manage-users/edit/<int:user_id>/", views.edit_user, name="edit_user"),
+    path("manage-users/add/", views.add_user, name="user_create"),
 ]

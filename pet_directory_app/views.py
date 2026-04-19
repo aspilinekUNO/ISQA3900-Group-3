@@ -3,7 +3,7 @@ from .models import Pet, Species, Shelter, MedicalRecord, ShelterAdminProfile
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from .forms import PetForm, ShelterForm, CustomUserCreationForm, ContactShelterForm
+from .forms import PetForm, ShelterForm, CustomUserCreationForm, ContactShelterForm, UserEditForm, AddUserForm
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
@@ -135,9 +135,6 @@ def pet_create(request):
             if is_shelter_admin(request.user):
                 pet.shelter = request.user.shelteradminprofile.shelter
             form.save()
-
-            if not pet.shelter.verified:
-                return HttpResponseForbidden("This shelter is not verified.")
 
             pet.save()
             return redirect("pet_list")
@@ -400,3 +397,82 @@ def delete_user(request, user_id):
 
     user_to_delete.delete()
     return redirect("user_management")
+
+def edit_user(request, user_id):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("You do not have permission to edit users.")
+
+    user_to_edit = get_object_or_404(User, id=user_id)
+
+    # Cannot edit other superusers
+    if user_to_edit.is_superuser:
+        return HttpResponseForbidden("You cannot edit another superuser.")
+
+    if request.method == "POST":
+        form = UserEditForm(request.POST, instance=user_to_edit)
+        if form.is_valid():
+            updated_user = form.save()
+
+            # Update role
+            is_admin = form.cleaned_data["is_shelter_admin"]
+            shelter = form.cleaned_data["shelter"]
+
+            admin_group = Group.objects.get(name="Shelter Admin")
+
+            if is_admin:
+                updated_user.groups.add(admin_group)
+                profile, created = ShelterAdminProfile.objects.get_or_create(
+                    user=updated_user,
+                    defaults={"shelter": shelter}
+                )
+                # If the profile already existed, update the shelter
+                if not created:
+                    profile.shelter = shelter
+                    profile.save()
+            else:
+                updated_user.groups.remove(admin_group)
+                ShelterAdminProfile.objects.filter(user=updated_user).delete()
+
+            return redirect("user_management")
+    else:
+        form = UserEditForm(instance=user_to_edit)
+
+    return render(request, "user_add.html", {"form": form, "user_to_edit": user_to_edit})
+
+def add_user(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("You do not have permission to add users.")
+
+    if request.method == "POST":
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            email = form.cleaned_data["email"]
+            password = form.cleaned_data["password"]
+            is_admin = form.cleaned_data["is_shelter_admin"]
+            shelter = form.cleaned_data["shelter"]
+
+            # Create the user
+            new_user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password
+            )
+
+            # Assign Shelter Admin role if needed
+            admin_group = Group.objects.get(name="Shelter Admin")
+
+            if is_admin:
+                new_user.groups.add(admin_group)
+
+                # Create profile with shelter
+                ShelterAdminProfile.objects.create(
+                    user=new_user,
+                    shelter=shelter
+                )
+
+            return redirect("user_management")
+    else:
+        form = AddUserForm()
+
+    return render(request, "user_form.html", {"form": form})
