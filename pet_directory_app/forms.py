@@ -54,11 +54,6 @@ class ShelterForm(forms.ModelForm):
             "verified",
             "admin_notes",
         ]
-
-class ContactShelterForm(forms.Form):
-    name = forms.CharField(max_length=100)
-    email = forms.EmailField()
-    message = forms.CharField(widget=forms.Textarea)
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
@@ -73,6 +68,11 @@ class ContactShelterForm(forms.Form):
             self.fields.pop("name")
             self.fields.pop("verified")
             self.fields.pop("admin_notes")
+
+class ContactShelterForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
 
 class CustomUserCreationForm(UserCreationForm):
     become_shelter_admin = forms.BooleanField(

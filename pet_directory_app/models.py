@@ -59,7 +59,6 @@ class Species(models.Model):
 class Shelter(models.Model):
     name = models.CharField(max_length=200)
     address_ln_1 = models.CharField(max_length=200)
-    email = models.EmailField()
     address_ln_2 = models.CharField(max_length=200, blank=True)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=50)
