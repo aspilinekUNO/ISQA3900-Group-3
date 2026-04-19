@@ -105,39 +105,33 @@
     <div class="landing-hero-content">
         <h1>Find Your Perfect Companion</h1>
         <p>Search for adoptable pets by species, breed, age, and location.</p>
-        <a href="{% url 'pet_list' %}" class="btn btn-light">Browse Pets</a>
+        <a href="{% url 'pet_list' %}" class="btn btn-custom">Browse Pets</a>
     </div>
 </section>
 
 <section class="featured-pets" id="featured">
     <h2>Featured Pets</h2>
     <div class="pet-grid">
-        <div class="pet-card">
-            <img src="https://th.bing.com/th/id/R.9003028d7ec6ff58a70a2be15a05ffed?rik=9cLEFO6s9oiGeg&riu=http%3a%2f%2fwww.publicdomainpictures.net%2fpictures%2f40000%2fvelka%2fgolden-retriever-dog-1364426710r9x.jpg&ehk=Z8ZK9mRUJe0rT61EYByfWPUGg1BEToYpGPK3bCz1aTU%3d&risl=&pid=ImgRaw&r=0" alt="Dog">
-            <div class="pet-info">
-                <h3>Buddy</h3>
-                <p>3-year-old Golden Retriever</p>
-                <span class="status available">Available</span>
-            </div>
-        </div>
-
-        <div class="pet-card">
-            <img src="https://th.bing.com/th/id/R.4fa4c3a835d1e41e34227df1ca6ca01b?rik=TKacV5kOmuZJSA&pid=ImgRaw&r=0" alt="Dog">
-            <div class="pet-info">
-                <h3>Luna</h3>
-                <p>5-month-old Afghan Hound</p>
-                <span class="status pending">Pending</span>
-            </div>
-        </div>
-
-        <div class="pet-card">
-            <img src="https://c2.staticflickr.com/6/5266/5597083289_b330aa27b0_b.jpg" alt="Dog">
-            <div class="pet-info">
-                <h3>Thumper</h3>
-                <p>1-year-old Chihuahua</p>
-                <span class="status adopted">Adopted</span>
-            </div>
-        </div>
+        {% for pet in featured_pets %}
+            <a href="{% url 'pet_detail' pet.id %}" class="pet-card">
+                <div class="pet-card">
+                    {% if pet.photo %}
+                        <img src="{{ pet.photo.url }}" class="img-fluid rounded" alt="{{ pet.name }}">
+                    {% else %}
+                        <img src="https://placehold.co/600x400?text=No+Image&font=roboto" class="img-fluid rounded" alt="No image">
+                    {% endif %}
+                    <div class="pet-info">
+                        <h3>{{ pet.name }}</h3>
+                        <p>{{ pet.age_in_years }} — {{ pet.shelter.name }}</p>
+                        <span class="status {{ pet.adoption_status|lower }}">
+                            {{ pet.get_adoption_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <p>No pets available right now.</p>
+        {% endfor %}
     </div>
 </section>
 

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Pet(models.Model):
     name = models.CharField(max_length=100)
@@ -10,7 +11,17 @@ class Pet(models.Model):
     color = models.CharField(max_length=100)
     size = models.CharField(max_length=100) # probably small, med, large
     description = models.TextField(blank=True)
-    adoption_status = models.CharField(max_length=100)
+
+    ADOPTION_STATUS_CHOICES = [
+        ("Available", "Available"),
+        ("Pending", "Pending"),
+        ("Adopted", "Adopted"),
+    ]
+    adoption_status = models.CharField(
+        max_length=20,
+        choices=ADOPTION_STATUS_CHOICES,
+        default="Available",
+    )
 
     photo = models.ImageField(upload_to="pet_photos/", blank=True, null=True)
 
@@ -71,3 +82,7 @@ class MedicalRecord(models.Model):
 
     def __str__(self):
         return f"{self.pet_id.name} - {self.date}"
+
+class ShelterAdminProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)
