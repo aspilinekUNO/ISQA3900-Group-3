@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4">
+        Contact {{ shelter.name }} about {{ pet.name }}
+    </h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-primary mt-3">
+                    Send Message
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
