@@ -32,6 +32,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'shelter_list' %}">Shelters</a>
                 </li>
+                {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'user_management' %}">Manage Users</a>
+                    </li>
+                {% endif %}
             </ul>
             {% if user.is_authenticated %}
                 <p class="text-white me-3 mb-0">Welcome, {{ user.username }}!</p>

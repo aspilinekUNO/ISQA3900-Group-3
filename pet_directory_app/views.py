@@ -3,7 +3,7 @@ from .models import Pet, Species, Shelter, MedicalRecord, ShelterAdminProfile
 from django.shortcuts import redirect
 from .forms import PetForm, ShelterForm, CustomUserCreationForm
 from django.http import HttpResponseForbidden
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.db.models import Q
 import random
 
@@ -286,3 +286,72 @@ def register(request):
         form = CustomUserCreationForm()
 
     return render(request, 'register.html', {'form': form})
+
+def user_management(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("You do not have permission to view this page.")
+
+    sort = request.GET.get("sort")
+    role_filter = request.GET.get("filter")
+
+    users = User.objects.exclude(id=request.user.id)
+
+    # FILTERING
+    if role_filter == "user":
+        users = users.filter(is_superuser=False).exclude(groups__name="Shelter Admin")
+    elif role_filter == "admin":
+        users = users.filter(groups__name="Shelter Admin")
+    elif role_filter == "superuser":
+        users = users.filter(is_superuser=True)
+
+    # Annotate role + role order
+    for u in users:
+        if u.is_superuser:
+            u.role = "Superuser"
+            u.role_order = 3
+            u.shelter_name = ""  # superusers have no shelter
+
+        elif u.groups.filter(name="Shelter Admin").exists():
+            u.role = "Shelter Admin"
+            u.role_order = 2
+
+            # Get the shelter name safely
+            if hasattr(u, "shelteradminprofile") and u.shelteradminprofile.shelter:
+                u.shelter_name = u.shelteradminprofile.shelter.name
+            else:
+                u.shelter_name = "(No Shelter Assigned)"
+
+        else:
+            u.role = "User"
+            u.role_order = 1
+            u.shelter_name = ""  # regular users have no shelter
+
+    # SORTING
+    if sort == "username_asc":
+        users = sorted(users, key=lambda u: u.username.lower())
+    elif sort == "username_desc":
+        users = sorted(users, key=lambda u: u.username.lower(), reverse=True)
+    elif sort == "role":
+        users = sorted(users, key=lambda u: u.role_order)
+
+    return render(request, "user_management.html", {
+        "users": users,
+        "selected_sort": sort,
+        "selected_filter": role_filter,
+    })
+
+def delete_user(request, user_id):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("You do not have permission to do this.")
+
+    user_to_delete = get_object_or_404(User, id=user_id)
+
+    # Superusers cannot delete other superusers
+    if user_to_delete.is_superuser:
+        return HttpResponseForbidden("You cannot delete another superuser.")
+    # Prevent deleting yourself (extra safety)
+    if user_to_delete.id == request.user.id:
+        return HttpResponseForbidden("You cannot delete your own account.")
+
+    user_to_delete.delete()
+    return redirect("user_management")
