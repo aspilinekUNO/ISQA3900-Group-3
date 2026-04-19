@@ -4,6 +4,7 @@ from .models import Shelter
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+
 class PetForm(forms.ModelForm):
     class Meta:
         model = Pet
@@ -54,6 +55,10 @@ class ShelterForm(forms.ModelForm):
             "admin_notes",
         ]
 
+class ContactShelterForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)
     def __init__(self, *args, **kwargs):
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)

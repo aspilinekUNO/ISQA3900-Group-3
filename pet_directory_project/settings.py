@@ -138,3 +138,5 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

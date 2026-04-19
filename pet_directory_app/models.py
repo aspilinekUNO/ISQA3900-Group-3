@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Pet(models.Model):
     name = models.CharField(max_length=100)
     species = models.ForeignKey("Species", on_delete=models.RESTRICT, null=True)
@@ -58,6 +59,7 @@ class Species(models.Model):
 class Shelter(models.Model):
     name = models.CharField(max_length=200)
     address_ln_1 = models.CharField(max_length=200)
+    email = models.EmailField()
     address_ln_2 = models.CharField(max_length=200, blank=True)
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=50)
@@ -66,6 +68,8 @@ class Shelter(models.Model):
     phone = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
     website = models.URLField(blank=True)
+
+    is_verified = models.BooleanField(default=False)
 
     visiting_hours = models.TextField(max_length=200, blank=True)
     verified = models.BooleanField(default=False)

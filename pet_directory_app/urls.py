@@ -18,6 +18,7 @@ urlpatterns = [
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', register, name='register'),
+    path("pets/<int:pk>/contact/", views.contact_shelter, name="contact_shelter"),
     path("manage-users/", views.user_management, name="user_management"),
     path("manage-users/delete/<int:user_id>/", views.delete_user, name="delete_user"),
 ]

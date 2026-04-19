@@ -27,10 +27,11 @@
                 <li class="list-group-item"><strong>Size:</strong> {{ pet.size }}</li>
                 <li class="list-group-item"><strong>Status:</strong> {{ pet.adoption_status }}</li>
             </ul>
+            <div class="d-flex gap-2 mb-3">
+                <a href="{% url 'pet_medical_records' pet.id %}" class="btn btn-outline-primary mb-3">View Medical Records</a>
+                <a href="{% url 'contact_shelter' pet.pk %}" class="btn btn-outline-primary mb-3">Contact Shelter</a>
+            </div>
 
-            <a href="{% url 'pet_medical_records' pet.id %}" class="btn btn-custom mb-3">
-    View Medical Records
-</a>
 
             <h5>Description</h5>
             <p>{{ pet.description }}</p>
