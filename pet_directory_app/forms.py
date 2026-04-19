@@ -2,6 +2,7 @@ from django import forms
 from .models import Pet
 from .models import Shelter
 
+
 class PetForm(forms.ModelForm):
     class Meta:
         model = Pet
@@ -35,3 +36,8 @@ class ShelterForm(forms.ModelForm):
             "verified",
             "admin_notes",
         ]
+
+class ContactShelterForm(forms.Form):
+    name = forms.CharField(max_length=100)
+    email = forms.EmailField()
+    message = forms.CharField(widget=forms.Textarea)

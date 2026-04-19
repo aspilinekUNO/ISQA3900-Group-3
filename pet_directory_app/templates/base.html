@@ -33,6 +33,9 @@
                     <a class="nav-link" href="{% url 'shelter_list' %}">Shelters</a>
                 </li>
             </ul>
+
+
+
             {% if user.is_authenticated %}
                 <p class="text-white me-3 mb-0">Welcome, {{ user.username }}!</p>
                 <form action="{% url 'logout' %}" method="post" class="d-inline">
@@ -45,6 +48,19 @@
             {% endif %}
         </div>
     </div>
+
+{% if user.is_authenticated and user.is_superuser %}
+    <ul class="navbar-nav ms-auto">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">Admin Actions</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'pet_create' %}">Add Pet</a></li>
+                    <li><a class="dropdown-item" href="{% url 'shelter_create' %}">Add Shelter</a>
+                    </li>
+                </ul>
+            </li>
+        {% endif %}
+
 </nav>
 
 <div class="container">

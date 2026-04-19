@@ -5,6 +5,10 @@ from django.shortcuts import redirect
 from .forms import PetForm
 from .forms import ShelterForm
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+from django.core.mail import send_mail
+from .forms import ContactShelterForm
 def index(request):
     return render(request, "index.html")
 
@@ -56,11 +60,17 @@ def pet_medical_records(request, pk):
         "records": records
     })
 
+@login_required
 def pet_create(request):
     if request.method == "POST":
         form = PetForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+
+            if not pet.shelter.is_verified:
+                return HttpResponseForbidden("This shelter is not verified.")
+
+            pet.save()
             return redirect("pet_list")
     else:
         form = PetForm()
@@ -131,3 +141,26 @@ def register(request):
         form = UserCreationForm()
 
     return render(request, 'register.html', {'form': form})
+
+def contact_shelter(request, pk):
+    pet = get_object_or_404(Pet, pk=pk)
+    shelter = pet.shelter
+
+    if request.method == "POST":
+        form = ContactShelterForm(request.POST)
+        if form.is_valid():
+            send_mail(
+                subject=f"Adoption Inquiry for {pet.name}",
+                message=form.cleaned_data["message"],
+                from_email=form.cleaned_data["email"],
+                recipient_list=[shelter.email],
+            )
+            return redirect("pet_detail", pk=pet.pk)
+    else:
+        form = ContactShelterForm()
+
+    return render(request, "contact_shelter.html", {
+        "form": form,
+        "pet": pet,
+        "shelter": shelter
+    })

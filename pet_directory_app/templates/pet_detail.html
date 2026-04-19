@@ -27,10 +27,10 @@
                 <li class="list-group-item"><strong>Size:</strong> {{ pet.size }}</li>
                 <li class="list-group-item"><strong>Status:</strong> {{ pet.adoption_status }}</li>
             </ul>
-
-            <a href="{% url 'pet_medical_records' pet.id %}" class="btn btn-outline-primary mb-3">
-    View Medical Records
-</a>
+        <div class="d-flex gap-2 mb-3">
+            <a href="{% url 'pet_medical_records' pet.id %}" class="btn btn-outline-primary mb-3">View Medical Records</a>
+            <a href="{% url 'contact_shelter' pet.pk %}" class="btn btn-outline-primary mb-3">Contact Shelter</a>
+        </div>
 
             <h5>Description</h5>
             <p>{{ pet.description }}</p>
@@ -50,10 +50,8 @@
 
             {% if user.is_staff %}
             <div class="mb-3">
-                <a href="{% url 'pet_update' pet.id %}" class="btn btn-warning me-2">Edit Pet</a>
-
-                <a href="{% url 'pet_delete' pet.id %}" class="btn btn-danger">Delete Pet</a>
-            </div>
+                <a href="{% url 'pet_update' pet.id %}" class="btn btn-warning me-2" style="background-color: #ffc107; border: none;">Edit Pet</a>
+                <a href="{% url 'pet_delete' pet.id %}" class="btn btn-danger" style="background-color: #ff0000; border: none;">Delete Pet</a>
             {% endif %}
         </div>
     </div>
