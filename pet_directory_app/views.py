@@ -295,6 +295,20 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})
 
+def contact(request):
+    pet_name = request.GET.get('pet', '')
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+        print("New Message:")
+        print(name, email, message)
+
+        return redirect("index")
+
+    return render(request, "contact.html", {"pet_name": pet_name})
+
 def contact_shelter(request, pk):
     pet = get_object_or_404(Pet, pk=pk)
     shelter = pet.shelter

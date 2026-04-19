@@ -84,6 +84,16 @@ class MedicalRecord(models.Model):
     def __str__(self):
         return f"{self.pet_id.name} - {self.date}"
 
+class ContactMessage(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    pet_name = models.CharField(max_length=100, blank=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.pet_name}"
+
 class ShelterAdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)

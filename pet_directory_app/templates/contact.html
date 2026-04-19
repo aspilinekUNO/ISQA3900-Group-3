@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Shelter</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f7f9fc;
+}
+
+
+header {
+    background: #4CAF50;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+nav a {
+    color: white;
+    margin-left: 15px;
+    text-decoration: none;
+}
+
+
+.container {
+    max-width: 900px;
+    margin: 3rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+
+.contact-info {
+    margin-bottom: 2rem;
+}
+
+.contact-info h2 {
+    color: #4CAF50;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input, textarea {
+    margin-bottom: 1rem;
+    padding: 0.7rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background: #4CAF50;
+    color: white;
+    padding: 0.7rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #45a049;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Pet Adoption Directory</h1>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="contact.html">Contact</a>
+    </nav>
+</header>
+
+<div class="container">
+
+
+    <div class="contact-info">
+        <h2>Shelter Contact Information</h2>
+        <p><strong>Email:</strong> shelter@email.com</p>
+        <p><strong>Phone:</strong> (123) 456-7890</p>
+        <p><strong>Location:</strong> Omaha, Nebraska</p>
+        <p><strong>Hours:</strong> Mon–Fri: 9AM – 5PM</p>
+    </div>
+
+
+    <h2>Contact Us About a Pet</h2>
+
+    <form>
+        <input type="text" name="name" placeholder="Your Name" required>
+
+        <input type="email" name="email" placeholder="Your Email" required>
+
+        <input type="text" name="pet" value="{{ pet_name }}" readonly>
+
+        <textarea name="message" rows="5" placeholder="Your Message..." required></textarea>
+
+        <button type="submit">Send Message</button>
+    </form>
+
+</div>
+
+</body>
+</html>
