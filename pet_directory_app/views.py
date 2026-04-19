@@ -137,7 +137,7 @@ def pet_create(request):
                 pet.shelter = request.user.shelteradminprofile.shelter
             form.save()
 
-            if not pet.shelter.is_verified:
+            if not pet.shelter.verified:
                 return HttpResponseForbidden("This shelter is not verified.")
 
             pet.save()

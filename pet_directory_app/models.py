@@ -69,8 +69,6 @@ class Shelter(models.Model):
     email = models.EmailField(blank=True)
     website = models.URLField(blank=True)
 
-    is_verified = models.BooleanField(default=False)
-
     visiting_hours = models.TextField(max_length=200, blank=True)
     verified = models.BooleanField(default=False)
     admin_notes = models.TextField(blank=True)
