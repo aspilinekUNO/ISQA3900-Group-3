@@ -11,7 +11,17 @@ class Pet(models.Model):
     color = models.CharField(max_length=100)
     size = models.CharField(max_length=100) # probably small, med, large
     description = models.TextField(blank=True)
-    adoption_status = models.CharField(max_length=100)
+
+    ADOPTION_STATUS_CHOICES = [
+        ("Available", "Available"),
+        ("Pending", "Pending"),
+        ("Adopted", "Adopted"),
+    ]
+    adoption_status = models.CharField(
+        max_length=20,
+        choices=ADOPTION_STATUS_CHOICES,
+        default="Available",
+    )
 
     photo = models.ImageField(upload_to="pet_photos/", blank=True, null=True)
 

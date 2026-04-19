@@ -39,7 +39,7 @@
 
             <h5>Shelter Information</h5>
             <p>
-                <strong>{{ pet.shelter.name }}</strong><br>
+                <a class="btn" href="{% url 'shelter_list' %}"><strong>{{ pet.shelter.name }}</strong></a><br>
                 {{ pet.shelter.address }}<br>
                 {{ pet.shelter.city }}, {{ pet.shelter.state }} {{ pet.shelter.zip_code }}<br>
                 <strong>Phone:</strong> {{ pet.shelter.phone }}<br>
@@ -48,12 +48,21 @@
 
 
 
-            {% if user.is_staff %}
+            {% if user.is_superuser %}
             <div class="mb-3">
                 <a href="{% url 'pet_update' pet.id %}" class="btn btn-warning me-2">Edit Pet</a>
 
                 <a href="{% url 'pet_delete' pet.id %}" class="btn btn-danger">Delete Pet</a>
             </div>
+            {% else %}
+                {% for g in user.groups.all %}
+                    {% if g.name == 'Shelter Admin' %}
+                        {% if user.shelteradminprofile.shelter.id == pet.shelter.id %}
+                            <a href="{% url 'pet_update' pet.id %}" class="btn btn-warning me-2">Edit</a>
+                            <a href="{% url 'pet_delete' pet.id %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
             {% endif %}
         </div>
     </div>
