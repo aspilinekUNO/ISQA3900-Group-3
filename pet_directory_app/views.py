@@ -476,3 +476,26 @@ def add_user(request):
         form = AddUserForm()
 
     return render(request, "user_form.html", {"form": form})
+
+@login_required
+def toggle_favorite(request, pet_id):
+    pet = get_object_or_404(Pet, id=pet_id)
+
+    if request.user in pet.favorited_by.all():
+        pet.favorited_by.remove(request.user)
+    else:
+        pet.favorited_by.add(request.user)
+
+    return redirect('pet_detail', pk=pet.id)
+
+@login_required
+def favorite_pets(request):
+    pets = Pet.objects.filter(favorited_by=request.user)
+    return render(request, 'favorite_pets.html', {'pets': pets})
+
+@login_required
+def notifications(request):
+    notifications = request.user.notification_set.all()
+    return render(request, "notifications.html", {
+        "notifications": notifications
+    })
