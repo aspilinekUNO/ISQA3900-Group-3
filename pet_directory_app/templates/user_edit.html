@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Edit User: {{ user_to_edit.username }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button class="btn btn-custom">Save Changes</button>
+    <a href="{% url 'user_management' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+<hr>
+
+<h4>Password Reset</h4>
+<a href="#" class="btn btn-warning">
+    Reset Password
+</a>
+
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const adminCheckbox = document.getElementById("id_is_shelter_admin");
+    const shelterField = document.getElementById("id_shelter").closest("p");
+    const verifiedField = document.getElementById("id_verified").closest("p");
+
+    function toggleFields() {
+        if (adminCheckbox.checked) {
+            shelterField.style.display = "block";
+            verifiedField.style.display = "block";
+        } else {
+            shelterField.style.display = "none";
+            verifiedField.style.display = "none";
+        }
+    }
+
+    adminCheckbox.addEventListener("change", toggleFields);
+    toggleFields();  // initialize on page load
+});
+</script>
+
+{% endblock %}

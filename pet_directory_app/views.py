@@ -127,6 +127,9 @@ def pet_create(request):
         return HttpResponseForbidden("You must be logged in.")
     if not (request.user.is_superuser or is_shelter_admin(request.user)):
         return HttpResponseForbidden("You do not have permission to add pets.")
+    # Unverified admins cannot edit shelter
+    if not request.user.shelteradminprofile.verified:
+        return HttpResponseForbidden("You are not verified.")
     if request.method == "POST":
         form = PetForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
@@ -158,6 +161,10 @@ def pet_update(request, pk):
 
         if pet.shelter != request.user.shelteradminprofile.shelter:
             return HttpResponseForbidden("You can only edit pets from your own shelter.")
+
+        # Unverified admins cannot edit pets
+        if not request.user.shelteradminprofile.verified:
+            return HttpResponseForbidden("You are not verified.")
 
     if request.user.groups.filter(name="Shelter Admin").exists():
         if pet.shelter != request.user.shelteradminprofile.shelter:
@@ -192,6 +199,10 @@ def pet_delete(request, pk):
 
         if pet.shelter != request.user.shelteradminprofile.shelter:
             return HttpResponseForbidden("You can only delete pets from your own shelter.")
+
+        # Unverified admins cannot delete pet
+        if not request.user.shelteradminprofile.verified:
+            return HttpResponseForbidden("You are not verified.")
 
     if request.method == "POST":
         pet.delete()
@@ -229,6 +240,10 @@ def shelter_update(request, pk):
         # Shelter Admins: only their own shelter
         if request.user.shelteradminprofile.shelter != shelter:
             return HttpResponseForbidden("You can only edit your own shelter.")
+
+        # Unverified admins cannot edit shelter
+        if not request.user.shelteradminprofile.verified:
+            return HttpResponseForbidden("You are not verified.")
 
     if request.user.groups.filter(name="Shelter Admin").exists():
         if shelter != request.user.shelteradminprofile.shelter:
@@ -272,13 +287,16 @@ def register(request):
 
                 if new_shelter_name:
                     shelter = Shelter.objects.create(name=new_shelter_name)
+                    admin_verified = True
                 else:
                     shelter = existing_shelter
+                    admin_verified = False
 
                 # Create profile
                 ShelterAdminProfile.objects.create(
                     user=user,
-                    shelter=shelter
+                    shelter=shelter,
+                    verified=admin_verified
                 )
 
             else:
@@ -348,6 +366,8 @@ def user_management(request):
 
     # Annotate role + role order
     for u in users:
+        u.is_shelter_admin = u.groups.filter(name="Shelter Admin").exists()
+
         if u.is_superuser:
             u.role = "Superuser"
             u.role_order = 3
@@ -416,6 +436,7 @@ def edit_user(request, user_id):
             # Update role
             is_admin = form.cleaned_data["is_shelter_admin"]
             shelter = form.cleaned_data["shelter"]
+            verified = form.cleaned_data.get("verified")
 
             admin_group = Group.objects.get(name="Shelter Admin")
 
@@ -428,6 +449,7 @@ def edit_user(request, user_id):
                 # If the profile already existed, update the shelter
                 if not created:
                     profile.shelter = shelter
+                    profile.verified = verified
                     profile.save()
             else:
                 updated_user.groups.remove(admin_group)
@@ -437,7 +459,7 @@ def edit_user(request, user_id):
     else:
         form = UserEditForm(instance=user_to_edit)
 
-    return render(request, "user_add.html", {"form": form, "user_to_edit": user_to_edit})
+    return render(request, "user_edit.html", {"form": form, "user_to_edit": user_to_edit})
 
 def add_user(request):
     if not request.user.is_superuser:

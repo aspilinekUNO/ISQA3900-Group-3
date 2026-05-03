@@ -112,11 +112,8 @@ class CustomUserCreationForm(UserCreationForm):
 
 class UserEditForm(forms.ModelForm):
     is_shelter_admin = forms.BooleanField(required=False, label="Shelter Admin")
-    shelter = forms.ModelChoiceField(
-        queryset=Shelter.objects.all(),
-        required=False,
-        label="Shelter"
-    )
+    shelter = forms.ModelChoiceField(queryset=Shelter.objects.all(), required=False)
+    verified = forms.BooleanField(required=False, label="Verified Admin")
 
     class Meta:
         model = User
@@ -126,23 +123,20 @@ class UserEditForm(forms.ModelForm):
         user_instance = kwargs.get("instance")
         super().__init__(*args, **kwargs)
 
-        # Pre-fill shelter admin checkbox
-        if user_instance and user_instance.groups.filter(name="Shelter Admin").exists():
+        # Pre-fill admin fields
+        if hasattr(user_instance, "shelteradminprofile"):
             self.fields["is_shelter_admin"].initial = True
-
-            # Pre-fill shelter
-            if hasattr(user_instance, "shelteradminprofile"):
-                self.fields["shelter"].initial = user_instance.shelteradminprofile.shelter
+            self.fields["shelter"].initial = user_instance.shelteradminprofile.shelter
+            self.fields["verified"].initial = user_instance.shelteradminprofile.verified
+        else:
+            self.fields["is_shelter_admin"].initial = False
 
     def clean(self):
         cleaned = super().clean()
-        is_admin = cleaned.get("is_shelter_admin")
-        shelter = cleaned.get("shelter")
-
-        if is_admin and not shelter:
-            self.add_error("shelter", "Shelter is required for shelter admins.")
-
+        if cleaned.get("is_shelter_admin") and not cleaned.get("shelter"):
+            raise forms.ValidationError("Shelter is required for shelter admins.")
         return cleaned
+
 
 class AddUserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
