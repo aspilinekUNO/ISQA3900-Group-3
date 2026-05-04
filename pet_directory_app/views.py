@@ -8,6 +8,7 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 import random
+from django.core.paginator import Paginator
 
 def index(request):
     # Only verified shelters + verified pets
@@ -57,8 +58,14 @@ def pet_list(request):
             pets = pets.filter(age__gte=84)
     if shelter_id:
         pets = pets.filter(shelter_id=shelter_id)
+
+    # PAGINATION
+    paginator = Paginator(pets, 12)  # 12 pets per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "pets": pets,
+        "page_obj": page_obj,
         "species_list": species_list,
         "selected_species": species_id,
         "selected_age": age_range,
@@ -80,7 +87,13 @@ def shelter_list(request):
     # Regular users and visitors see only verified shelters
     else:
         shelters = Shelter.objects.filter(verified=True)
-    return render(request, "shelter_list.html", {"shelter_list": shelters})
+
+    # PAGINATION
+    paginator = Paginator(shelters, 10)  # 10 shelters per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "shelter_list.html", {"page_obj": page_obj})
 
 def pet_detail(request, pk):
     pet = get_object_or_404(Pet, pk=pk)
