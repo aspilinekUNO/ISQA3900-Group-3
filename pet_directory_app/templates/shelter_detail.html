@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{{ shelter.name }}{% endblock %}
+
+{% block content %}
+
+    <h2>{{ shelter.name }}</h2>
+
+    <p>
+        {{ shelter.address_ln_1 }}<br>
+        {% if shelter.address_ln_2 %}
+            {{ shelter.address_ln_2 }}<br>
+        {% endif %}
+        {{ shelter.city }}, {{ shelter.state }} {{ shelter.zip_code }}
+    </p>
+
+    {% if shelter.phone %}
+        <p><strong>Phone:</strong> {{ shelter.phone }}</p>
+    {% endif %}
+
+    {% if shelter.email %}
+        <p><strong>Email:</strong> {{ shelter.email }}</p>
+    {% endif %}
+
+    {% if shelter.website %}
+        <p><strong>Website:</strong>
+            <a href="{{ shelter.website }}" target="_blank">{{ shelter.website }}</a>
+        </p>
+    {% endif %}
+
+    {% if shelter.visiting_hours %}
+        <p><strong>Visiting Hours:</strong><br>{{ shelter.visiting_hours|linebreaks }}</p>
+    {% endif %}
+
+    <hr>
+
+    <h3>Shelter Admins</h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Status</th>
+                {% if can_edit %}
+                    <th>Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for admin in admins %}
+                <tr>
+                    <td>{{ admin.user.username }}</td>
+                    <td>{{ admin.user.email }}</td>
+
+                    <td>
+                        {% if admin.verified %}
+                            <span class="badge bg-success">✔</span>
+                        {% else %}
+                            <span class="badge bg-danger">X</span>
+                        {% endif %}
+                    </td>
+
+                    {% if can_edit %}
+                        <td>
+                            <a href="{% url 'edit_user' admin.user.id %}" class="btn btn-sm btn-warning">
+                                Edit User
+                            </a>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">No admins found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

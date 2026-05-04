@@ -10,7 +10,9 @@
         {% for shelter in shelter_list %}
         <div class="card mb-3">
             <div class="card-body">
-                <h4>{{ shelter.name }}</h4>
+                <h4><a href="{% url 'shelter_detail' shelter.id %}">
+                    {{ shelter.name }}
+                </a></h4>
 
                 <p>
                     {{ shelter.address_ln_1 }}<br>

@@ -498,3 +498,31 @@ def add_user(request):
         form = AddUserForm()
 
     return render(request, "user_form.html", {"form": form})
+
+def shelter_detail(request, shelter_id):
+    shelter = get_object_or_404(Shelter, id=shelter_id)
+
+    # All admins for this shelter
+    admins = ShelterAdminProfile.objects.filter(shelter=shelter).select_related("user")
+
+    # Role-based filtering
+    if request.user.is_superuser:
+        # Superusers see everything
+        visible_admins = admins
+        can_edit = True
+
+    elif hasattr(request.user, "shelteradminprofile") and request.user.shelteradminprofile.shelter == shelter:
+        # Shelter admins see all admins for their shelter
+        visible_admins = admins
+        can_edit = False
+
+    else:
+        # Regular users see only verified admins
+        visible_admins = admins.filter(verified=True)
+        can_edit = False
+
+    return render(request, "shelter_detail.html", {
+        "shelter": shelter,
+        "admins": visible_admins,
+        "can_edit": can_edit,
+    })
