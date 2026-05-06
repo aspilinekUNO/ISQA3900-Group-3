@@ -46,8 +46,16 @@
                 <strong>Phone:</strong> {{ pet.shelter.phone }}<br>
                 <strong>Hours:</strong> {{ pet.shelter.visiting_hours }}
             </p>
-
-
+        <form method="post" action="{% url 'toggle_favorite' pet.id %}">
+            {% csrf_token %}
+            <button type="submit">
+    {% if user in pet.favorited_by.all %}
+        <i class="bi bi-star-fill"></i> Favorited
+    {% else %}
+        <i class="bi bi-star"></i> Favorite
+    {% endif %}
+</button>
+</form>
 
             {% if user.is_superuser %}
             <div class="mb-3">
