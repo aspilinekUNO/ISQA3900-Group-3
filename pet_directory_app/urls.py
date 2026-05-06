@@ -20,5 +20,4 @@ urlpatterns = [
     path('register/', register, name='register'),
     path("contact/", views.contact, name="contact"),
     path('submit-review/', views.submit_review, name='submit_review'),
-    path('reviews/', views.all_reviews, name='all_reviews'),
 ]

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Pet(models.Model):
     name = models.CharField(max_length=100)
@@ -81,15 +82,6 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.pet_name}"
-
-
-class Shelter(models.Model):
-    name = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
-
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -1,6 +1,5 @@
 from django import forms
-from .models import Pet
-from .models import Shelter
+from .models import Pet, Shelter, Review
 
 class PetForm(forms.ModelForm):
     class Meta:

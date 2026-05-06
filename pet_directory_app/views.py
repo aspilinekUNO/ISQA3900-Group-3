@@ -1,9 +1,6 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Pet, Species, Shelter
-from .models import MedicalRecord
-from django.shortcuts import redirect
-from .forms import PetForm
-from .forms import ShelterForm
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Pet, Species, Shelter, MedicalRecord
+from .forms import PetForm, ShelterForm, ReviewForm
 from django.contrib.auth.forms import UserCreationForm
 def index(request):
     return render(request, "index.html")
