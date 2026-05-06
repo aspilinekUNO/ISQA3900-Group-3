@@ -21,4 +21,12 @@ urlpatterns = [
     path("contact/", views.contact, name="contact"),
     path('submit-review/', views.submit_review, name='submit_review'),
     path('reviews/', views.all_reviews, name='all_reviews'),
+    path("pets/<int:pk>/contact/", views.contact_shelter, name="contact_shelter"),
+    path("manage-users/", views.user_management, name="user_management"),
+    path("manage-users/delete/<int:user_id>/", views.delete_user, name="delete_user"),
+    path("manage-users/edit/<int:user_id>/", views.edit_user, name="edit_user"),
+    path("manage-users/add/", views.add_user, name="user_create"),
+    path('pet/<int:pet_id>/favorite/', views.toggle_favorite, name='toggle_favorite'),
+    path('favorites/', views.favorite_pets, name='favorite_pets'),
+    path('notifications/', views.notifications, name='notifications'),
 ]

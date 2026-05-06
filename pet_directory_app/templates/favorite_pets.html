@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>My Favorite Pets</h2>
+
+    {% if pets %}
+        <div class="row">
+            {% for pet in pets %}
+                <div class="col-md-4">
+                    <div class="card mb-3">
+                        {% if pet.photo %}
+                            <img src="{{ pet.photo.url }}" class="card-img-top" style="height: 250px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ pet.name }}</h5>
+                            <p>Status: {{ pet.adoption_status }}</p>
+
+                            <a href="{% url 'pet_detail' pet.id %}" class="btn btn-primary">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You haven't favorited any pets yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
