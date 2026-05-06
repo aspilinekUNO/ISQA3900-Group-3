@@ -1,0 +1,19 @@
+<h2>All Reviews</h2>
+
+{% for review in reviews %}
+    <div class="review">
+        <strong>{{ review.user.username }}</strong>
+
+        {% if review.shelter %}
+            <p>Shelter: {{ review.shelter.name }}</p>
+        {% else %}
+            <p>Website Review</p>
+        {% endif %}
+
+        <p>Rating: {{ review.rating }}/5</p>
+        <p>{{ review.comment }}</p>
+        <small>{{ review.created_at }}</small>
+    </div>
+{% empty %}
+    <p>No reviews yet.</p>
+{% endfor %}

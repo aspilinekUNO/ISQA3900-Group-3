@@ -35,3 +35,8 @@ class ShelterForm(forms.ModelForm):
             "verified",
             "admin_notes",
         ]
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['shelter', 'rating', 'comment']

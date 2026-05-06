@@ -81,3 +81,24 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.pet_name}"
+
+
+class Shelter(models.Model):
+    name = models.CharField(max_length=255)
+    location = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, null=True, blank=True)
+    rating = models.IntegerField()
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.shelter:
+            return f"{self.user} - {self.shelter.name} - {self.rating}"
+        return f"{self.user} - Website Review - {self.rating}"

@@ -145,3 +145,16 @@ def contact(request):
         return redirect("index")
 
     return render(request, "contact.html", {"pet_name": pet_name})
+
+def submit_review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.save()
+            return redirect('home')
+    else:
+        form = ReviewForm()
+
+    return render(request, 'submit_review.html', {'form': form})
