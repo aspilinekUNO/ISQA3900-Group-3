@@ -11,9 +11,22 @@ class Pet(models.Model):
     color = models.CharField(max_length=100)
     size = models.CharField(max_length=100) # probably small, med, large
     description = models.TextField(blank=True)
-    adoption_status = models.CharField(max_length=100)
+
+    ADOPTION_STATUS_CHOICES = [
+        ("Available", "Available"),
+        ("Pending", "Pending"),
+        ("Adopted", "Adopted"),
+    ]
+    adoption_status = models.CharField(
+        max_length=20,
+        choices=ADOPTION_STATUS_CHOICES,
+        default="Available",
+    )
+
 
     photo = models.ImageField(upload_to="pet_photos/", blank=True, null=True)
+
+    favorited_by = models.ManyToManyField(User, related_name='favorite_pets', blank=True)
 
     def __str__(self):
         return self.name
@@ -37,6 +50,31 @@ class Pet(models.Model):
             return "0 months"
 
         return ", ".join(parts)
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old = Pet.objects.get(pk=self.pk)
+            old_status = old.adoption_status
+        else:
+            old_status = None
+
+        super().save(*args, **kwargs)
+
+        if old_status and old_status != self.adoption_status:
+            self.notify_favorited_users(old_status, self.adoption_status)
+
+    def notify_favorited_users(self, old_status, new_status):
+        for user in self.favorited_by.all():
+
+            message = f"{self.name} status changed from {old_status} to {new_status}"
+
+            if new_status == "Adopted":
+                message = f"Good news! {self.name} has been adopted."
+
+            Notification.objects.create(
+                user=user,
+                message=message
+            )
 
 class Species(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -94,3 +132,12 @@ class Review(models.Model):
         if self.shelter:
             return f"{self.user} - {self.shelter.name} - {self.rating}"
         return f"{self.user} - Website Review - {self.rating}"
+class ShelterAdminProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
