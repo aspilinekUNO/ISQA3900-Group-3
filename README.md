@@ -16,6 +16,7 @@ The goal is to streamline the adoption process by making it easier for families 
 - Responsive layout for mobile and desktop
 - Navigation bar and consistent base template
 - Unverified shelters and pets will not be visible
+- Click on "Welcome, User!" to view your profile
 
 ### User and Admin Functions
 - Superusers
@@ -26,13 +27,16 @@ The goal is to streamline the adoption process by making it easier for families 
     - Filters and sorting for user list
 - Role system
     - Regular users
-    - Shelter Admins assigned to one specific shelter
+    - Verified vs Unverified admins: new shelter admins of an existing shelter will remain unverified until changed by a superuser
+        - Verified admins can add, edit, delete pets while unverified can only view
     - Superuser (full access)
 
 ### Email Communication
 - Shelter contact form
 - Email notifications for adoption inquiries
 - Email routing to the correct shelter
+- Password reset
+- SMTP Email Backend
 
 ## Tech Stack
 - Python 3.10.0
@@ -40,6 +44,7 @@ The goal is to streamline the adoption process by making it easier for families 
 - SQLite3 database
 - HTML, CSS, & Bootstrap
 - Pillow for image handling
+- Automated creation of user groups and Species selections
 
 # Installment Instructions
 Clone the repository
@@ -85,20 +90,24 @@ python manage.py createsuperuser
 - Click a pet card to view more detailed information
 - Superusers can manage users and add pets, shelters, and users
 - Email inquiries can be sent to shelters through pet detail pages
+- Pets can be favorited, and notifications will appear about updates
 
 # Known Issues
-- No pagination on pet list or shelter list
-- Limited form validation in some areas
-- No user-facing password reset flow
 - Needed improvements for form layouts
-- Users can add themselves as unverified admins to verified shelters
+- Notifications are not sent via email
+- If a shelter lacks an email, users attempting to contact them will not be notified that their message won't go through
+- Time is currently tracked with the UTC time zone rather than the user's timezone
+- Shelter admin emails are currently posted automatically
+
+# Automated Testing
+- Selenium UI tests
+  - Verify login and logout
+  - Pet creation test
+  - Unverified admin blocking test
 
 # Future Improvements
-- Add email to user creation form
-- Add password reset and account recovery
-- Allow users to “favorite” pets
-- Route emails to real addresses rather than the terminal
-- Implement pagination for large pet lists
-- Add automated Django tests
+- Expand profile page to include a picture and changing username/email
 - Improve mobile responsiveness for certain sections
 - Add shelter admin dashboards for analytics, adoption, and pet metrics
+- Let shelters view individual analytics
+- Allow verified shelter admins to verify other admins from their own shelter
