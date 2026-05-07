@@ -55,9 +55,9 @@
     </div>
 </form>
 
-{% if pets %}
+{% if page_obj %}
     <div class="row row-cols-1 row-cols-md-4 g-4">
-        {% for pet in pets %}
+        {% for pet in page_obj %}
         <div class="col">
             <div class="card h-100 pet-card">
                 <span class="status {{ pet.adoption_status|lower }}">
@@ -84,7 +84,7 @@
         {% endfor %}
     </div>
 {% else %}
-    <p class="text-muted mt-4">No pets found for this species.</p>
+    <p class="text-muted mt-4">No pets found.</p>
 {% endif %}
 
 {% if user.is_superuser %}
@@ -98,5 +98,33 @@
     {% endfor %}
 {% endif %}
 
+<!-- pagination controls -->
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ request.GET.urlencode|cut:'page='|yesno:',&' }}">
+                    Previous
+                </a>
+            </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ request.GET.urlencode|cut:'page='|yesno:',&' }}">
+                    Next
+                </a>
+            </li>
+        {% endif %}
+
+    </ul>
+</nav>
 
 {% endblock %}

@@ -66,7 +66,7 @@
                 {% endif %}
             </ul>
             {% if user.is_authenticated %}
-                <p class="text-white me-3 mb-0">Welcome, {{ user.username }}!</p>
+                <a class="text-white me-3 mb-0 nav-link" href="{% url 'user_profile' %}">Welcome, {{ user.username }}!</a>
                 <form action="{% url 'logout' %}" method="post" class="d-inline">
                     {% csrf_token %}
                     <button type="submit" class="nav-link p-0 text-white" style="background:none; border:none;">

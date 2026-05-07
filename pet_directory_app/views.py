@@ -1,13 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.shortcuts import render, get_object_or_404
-from .models import Pet, Species, Shelter, MedicalRecord, ShelterAdminProfile
+from .models import Pet, Species, Shelter, MedicalRecord, ShelterAdminProfile, Review
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from .forms import PetForm, ShelterForm, CustomUserCreationForm, ContactShelterForm, UserEditForm, AddUserForm, ReviewForm
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 import random
+from django.core.paginator import Paginator
+from django.contrib.auth.forms import PasswordResetForm
+from django.conf import settings
 
 def index(request):
     # Only verified shelters + verified pets
@@ -57,8 +59,14 @@ def pet_list(request):
             pets = pets.filter(age__gte=84)
     if shelter_id:
         pets = pets.filter(shelter_id=shelter_id)
+
+    # PAGINATION
+    paginator = Paginator(pets, 12)  # 12 pets per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
     context = {
-        "pets": pets,
+        "page_obj": page_obj,
         "species_list": species_list,
         "selected_species": species_id,
         "selected_age": age_range,
@@ -80,7 +88,13 @@ def shelter_list(request):
     # Regular users and visitors see only verified shelters
     else:
         shelters = Shelter.objects.filter(verified=True)
-    return render(request, "shelter_list.html", {"shelter_list": shelters})
+
+    # PAGINATION
+    paginator = Paginator(shelters, 10)  # 10 shelters per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "shelter_list.html", {"page_obj": page_obj})
 
 def pet_detail(request, pk):
     pet = get_object_or_404(Pet, pk=pk)
@@ -123,10 +137,24 @@ def pet_medical_records(request, pk):
 
 @login_required
 def pet_create(request):
-    if not request.user.is_authenticated:
-        return HttpResponseForbidden("You must be logged in.")
-    if not (request.user.is_superuser or is_shelter_admin(request.user)):
-        return HttpResponseForbidden("You do not have permission to add pets.")
+    user = request.user
+
+    # Superusers always allowed
+    if user.is_superuser:
+        profile = None
+    else:
+        # Must be shelter admin
+        if not is_shelter_admin(user):
+            return HttpResponseForbidden("You do not have permission to add pets.")
+        # Must have a profile
+        try:
+            profile = user.shelteradminprofile
+        except ShelterAdminProfile.DoesNotExist:
+            return HttpResponseForbidden("Shelter admin profile missing.")
+        # Must be verified
+        if not profile.verified:
+            return HttpResponseForbidden("You are not verified.")
+
     if request.method == "POST":
         form = PetForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
@@ -158,6 +186,10 @@ def pet_update(request, pk):
 
         if pet.shelter != request.user.shelteradminprofile.shelter:
             return HttpResponseForbidden("You can only edit pets from your own shelter.")
+
+        # Unverified admins cannot edit pets
+        if not request.user.shelteradminprofile.verified:
+            return HttpResponseForbidden("You are not verified.")
 
     if request.user.groups.filter(name="Shelter Admin").exists():
         if pet.shelter != request.user.shelteradminprofile.shelter:
@@ -192,6 +224,10 @@ def pet_delete(request, pk):
 
         if pet.shelter != request.user.shelteradminprofile.shelter:
             return HttpResponseForbidden("You can only delete pets from your own shelter.")
+
+        # Unverified admins cannot delete pet
+        if not request.user.shelteradminprofile.verified:
+            return HttpResponseForbidden("You are not verified.")
 
     if request.method == "POST":
         pet.delete()
@@ -230,6 +266,10 @@ def shelter_update(request, pk):
         if request.user.shelteradminprofile.shelter != shelter:
             return HttpResponseForbidden("You can only edit your own shelter.")
 
+        # Unverified admins cannot edit shelter
+        if not request.user.shelteradminprofile.verified:
+            return HttpResponseForbidden("You are not verified.")
+
     if request.user.groups.filter(name="Shelter Admin").exists():
         if shelter != request.user.shelteradminprofile.shelter:
             return HttpResponseForbidden("You cannot edit another shelter.")
@@ -258,7 +298,9 @@ def register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.email = form.cleaned_data["email"]
+            user.save()
 
             # Did they choose to become a shelter admin?
             if form.cleaned_data["become_shelter_admin"]:
@@ -272,13 +314,16 @@ def register(request):
 
                 if new_shelter_name:
                     shelter = Shelter.objects.create(name=new_shelter_name)
+                    admin_verified = True
                 else:
                     shelter = existing_shelter
+                    admin_verified = False
 
                 # Create profile
                 ShelterAdminProfile.objects.create(
                     user=user,
-                    shelter=shelter
+                    shelter=shelter,
+                    verified=admin_verified
                 )
 
             else:
@@ -313,12 +358,16 @@ def contact_shelter(request, pk):
     if request.method == "POST":
         form = ContactShelterForm(request.POST)
         if form.is_valid():
-            send_mail(
+            user_email = form.cleaned_data["email"]
+            message_body = f"From: {user_email}\n\n{form.cleaned_data['message']}"
+            email = EmailMessage(
                 subject=f"Adoption Inquiry for {pet.name}",
-                message=form.cleaned_data["message"],
-                from_email=form.cleaned_data["email"],
-                recipient_list=[shelter.email],
+                body=message_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[shelter.email],
+                reply_to=[user_email],
             )
+            email.send()
             return redirect("pet_detail", pk=pet.pk)
     else:
         form = ContactShelterForm()
@@ -348,6 +397,8 @@ def user_management(request):
 
     # Annotate role + role order
     for u in users:
+        u.is_shelter_admin = u.groups.filter(name="Shelter Admin").exists()
+
         if u.is_superuser:
             u.role = "Superuser"
             u.role_order = 3
@@ -416,6 +467,7 @@ def edit_user(request, user_id):
             # Update role
             is_admin = form.cleaned_data["is_shelter_admin"]
             shelter = form.cleaned_data["shelter"]
+            verified = form.cleaned_data.get("verified")
 
             admin_group = Group.objects.get(name="Shelter Admin")
 
@@ -428,6 +480,7 @@ def edit_user(request, user_id):
                 # If the profile already existed, update the shelter
                 if not created:
                     profile.shelter = shelter
+                    profile.verified = verified
                     profile.save()
             else:
                 updated_user.groups.remove(admin_group)
@@ -437,7 +490,7 @@ def edit_user(request, user_id):
     else:
         form = UserEditForm(instance=user_to_edit)
 
-    return render(request, "user_add.html", {"form": form, "user_to_edit": user_to_edit})
+    return render(request, "user_edit.html", {"form": form, "user_to_edit": user_to_edit})
 
 def add_user(request):
     if not request.user.is_superuser:
@@ -477,6 +530,36 @@ def add_user(request):
 
     return render(request, "user_form.html", {"form": form})
 
+def shelter_detail(request, shelter_id):
+    shelter = get_object_or_404(Shelter, id=shelter_id)
+    reviews = Review.objects.filter(shelter=shelter).order_by('-created_at')
+
+    # All admins for this shelter
+    admins = ShelterAdminProfile.objects.filter(shelter=shelter).select_related("user")
+
+    # Role-based filtering
+    if request.user.is_superuser:
+        # Superusers see everything
+        visible_admins = admins
+        can_edit = True
+
+    elif hasattr(request.user, "shelteradminprofile") and request.user.shelteradminprofile.shelter == shelter:
+        # Shelter admins see all admins for their shelter
+        visible_admins = admins
+        can_edit = False
+
+    else:
+        # Regular users see only verified admins
+        visible_admins = admins.filter(verified=True)
+        can_edit = False
+
+    return render(request, "shelter_detail.html", {
+        "shelter": shelter,
+        "admins": visible_admins,
+        "can_edit": can_edit,
+        "reviews": reviews,
+    })
+
 @login_required
 def toggle_favorite(request, pet_id):
     pet = get_object_or_404(Pet, id=pet_id)
@@ -492,20 +575,6 @@ def toggle_favorite(request, pet_id):
 def favorite_pets(request):
     pets = Pet.objects.filter(favorited_by=request.user)
     return render(request, 'favorite_pets.html', {'pets': pets})
-
-def contact(request):
-    pet_name = request.GET.get('pet', '')
-
-    if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        message = request.POST.get("message")
-        print("New Message:")
-        print(name, email, message)
-
-        return redirect("")
-
-    return render(request, "contact.html", {"pet_name": pet_name})
 
 @login_required
 def submit_review(request):
@@ -526,3 +595,25 @@ def notifications(request):
     return render(request, "notifications.html", {
         "notifications": notifications
     })
+
+def user_profile(request):
+    from django.core.mail import send_mail
+    from django.conf import settings
+
+    return render(request, "user_profile.html", {
+        "user": request.user
+    })
+
+@login_required
+def auto_password_reset(request):
+    user = request.user
+    form = PasswordResetForm({"email": user.email})
+
+    if form.is_valid():
+        form.save(
+            request=request,
+            use_https=request.is_secure(),
+            email_template_name="registration/password_reset_email.html",
+        )
+
+    return redirect("password_reset_done")

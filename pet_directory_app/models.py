@@ -136,6 +136,7 @@ class Review(models.Model):
 class ShelterAdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)
+    verified = models.BooleanField(default=False)
 
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
