@@ -1,9 +1,9 @@
+from django.shortcuts import render, get_object_or_404, redirect
 from django.shortcuts import render, get_object_or_404
 from .models import Pet, Species, Shelter, MedicalRecord, ShelterAdminProfile
-from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from .forms import PetForm, ShelterForm, CustomUserCreationForm, ContactShelterForm, UserEditForm, AddUserForm
+from .forms import PetForm, ShelterForm, CustomUserCreationForm, ContactShelterForm, UserEditForm, AddUserForm, ReviewForm
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
@@ -493,6 +493,33 @@ def favorite_pets(request):
     pets = Pet.objects.filter(favorited_by=request.user)
     return render(request, 'favorite_pets.html', {'pets': pets})
 
+def contact(request):
+    pet_name = request.GET.get('pet', '')
+
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        message = request.POST.get("message")
+        print("New Message:")
+        print(name, email, message)
+
+        return redirect("")
+
+    return render(request, "contact.html", {"pet_name": pet_name})
+
+@login_required
+def submit_review(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.user = request.user
+            review.save()
+            return redirect('index')
+    else:
+        form = ReviewForm()
+
+    return render(request, 'submit_review.html', {'form': form})
 @login_required
 def notifications(request):
     notifications = request.user.notification_set.all()

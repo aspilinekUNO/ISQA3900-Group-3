@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 class Pet(models.Model):
     name = models.CharField(max_length=100)
     species = models.ForeignKey("Species", on_delete=models.RESTRICT, null=True)
@@ -121,6 +120,18 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.pet_name}"
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)
+    rating = models.IntegerField()
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        if self.shelter:
+            return f"{self.user} - {self.shelter.name} - {self.rating}"
+        return f"{self.user} - Website Review - {self.rating}"
 
 class ShelterAdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
