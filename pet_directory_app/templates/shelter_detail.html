@@ -34,6 +34,31 @@
 
     <hr>
 
+    <a href="{% url 'submit_review' %}"
+       class="btn btn-sm btn-custom me-2">
+        Leave a Review
+    </a>
+
+    <h3 class="mt-4">Reviews</h3>
+
+    {% if reviews %}
+        <ul class="list-group mt-3">
+            {% for review in reviews %}
+                <li class="list-group-item">
+                    <strong>Rating:</strong> {{ review.rating }}/5<br>
+                    <strong>Comment:</strong> {{ review.comment }}<br>
+                    <small class="text-muted">
+                        Posted by {{ review.user.username }} on {{ review.created_at }}
+                    </small>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted mt-3">No reviews yet. Be the first to leave one!</p>
+    {% endif %}
+
+    <hr>
+
     <h3>Shelter Admins</h3>
 
     <table class="table">

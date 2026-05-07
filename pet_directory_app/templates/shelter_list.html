@@ -40,6 +40,11 @@
                     <p><strong>Visiting Hours:</strong><br>{{ shelter.visiting_hours|linebreaks }}</p>
                 {% endif %}
 
+                <a href="{% url 'submit_review' %}"
+                   class="btn btn-sm btn-custom me-2">
+                    Leave a Review
+                </a>
+
                 {% if user.is_superuser %}
                     <!-- Superusers: full control -->
                     <a href="{% url 'shelter_update' shelter.id %}" class="btn btn-warning btn-sm me-2">Edit</a>

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Pet, Species, Shelter, MedicalRecord, ShelterAdminProfile
+from .models import Pet, Species, Shelter, MedicalRecord, ShelterAdminProfile, Review
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from .forms import PetForm, ShelterForm, CustomUserCreationForm, ContactShelterForm, UserEditForm, AddUserForm, ReviewForm
@@ -513,6 +513,7 @@ def add_user(request):
 
 def shelter_detail(request, shelter_id):
     shelter = get_object_or_404(Shelter, id=shelter_id)
+    reviews = Review.objects.filter(shelter=shelter).order_by('-created_at')
 
     # All admins for this shelter
     admins = ShelterAdminProfile.objects.filter(shelter=shelter).select_related("user")
@@ -537,6 +538,7 @@ def shelter_detail(request, shelter_id):
         "shelter": shelter,
         "admins": visible_admins,
         "can_edit": can_edit,
+        "reviews": reviews,
     })
 
 @login_required
