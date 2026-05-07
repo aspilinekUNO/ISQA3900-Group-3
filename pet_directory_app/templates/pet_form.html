@@ -8,7 +8,7 @@
         {% csrf_token %}
         {{ form.as_p }}
 
-        <button class="btn btn-success">Save</button>
+        <button type="submit" class="btn btn-success">Save</button>
         <a href="{% url 'pet_list' %}" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
