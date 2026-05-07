@@ -69,9 +69,33 @@ class ShelterForm(forms.ModelForm):
             self.fields.pop("admin_notes")
 
 class ReviewForm(forms.ModelForm):
+    rating = forms.IntegerField(min_value=1, max_value=5)
     class Meta:
         model = Review
         fields = ['shelter', 'rating', 'comment']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['shelter'].required = True
+        self.fields['rating'].required = True
+        self.fields['comment'].required = True
+
+    def valid_rating(self):
+        rating = self.cleaned_data.get('rating')
+
+        # Ensure rating is provided
+        if rating is None:
+            raise forms.ValidationError("Please enter a rating between 1 and 5.")
+
+        # Ensure rating is an integer between 1 and 5
+        try:
+            rating = int(rating)
+        except ValueError:
+            raise forms.ValidationError("Rating must be a number between 1 and 5.")
+        if not (1 <= rating <= 5):
+            raise forms.ValidationError("Rating must be between 1 and 5.")
+
+        return rating
 
 class ContactShelterForm(forms.Form):
     name = forms.CharField(max_length=100)

@@ -1,9 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
 <h2>Leave a Review</h2>
 
 <form method="POST">
     {% csrf_token %}
 
-    <label>Choose Shelter (optional):</label>
+    <label>Choose Shelter:</label>
     {{ form.shelter }}
 
     <label>Rating (1–5):</label>
@@ -14,3 +17,4 @@
 
     <button type="submit">Submit</button>
 </form>
+{% endblock %}

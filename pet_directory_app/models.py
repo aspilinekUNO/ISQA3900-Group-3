@@ -123,7 +123,7 @@ class ContactMessage(models.Model):
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE, null=True, blank=True)
+    shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)
     rating = models.IntegerField()
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -132,6 +132,7 @@ class Review(models.Model):
         if self.shelter:
             return f"{self.user} - {self.shelter.name} - {self.rating}"
         return f"{self.user} - Website Review - {self.rating}"
+
 class ShelterAdminProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     shelter = models.ForeignKey(Shelter, on_delete=models.CASCADE)

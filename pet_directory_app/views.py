@@ -503,10 +503,11 @@ def contact(request):
         print("New Message:")
         print(name, email, message)
 
-        return redirect("index")
+        return redirect("")
 
     return render(request, "contact.html", {"pet_name": pet_name})
 
+@login_required
 def submit_review(request):
     if request.method == 'POST':
         form = ReviewForm(request.POST)
@@ -514,7 +515,7 @@ def submit_review(request):
             review = form.save(commit=False)
             review.user = request.user
             review.save()
-            return redirect('home')
+            return redirect('index')
     else:
         form = ReviewForm()
 
