@@ -13,3 +13,12 @@ class PetDirectoryAppConfig(AppConfig):
 
     def ready(self):
         post_migrate.connect(create_default_groups, sender=self)
+
+        from .models import Species
+        default_species = ["Dog", "Cat", "Bearded Dragon", "Bird"]
+
+        try:
+            for name in default_species:
+                Species.objects.get_or_create(name=name)
+        except:
+            pass
