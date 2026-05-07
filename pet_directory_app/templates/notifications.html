@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <h2 class="mb-4">Notifications</h2>
+
+    {% if notifications %}
+        <div class="list-group shadow-sm">
+
+            {% for n in notifications %}
+                <div class="list-group-item d-flex justify-content-between align-items-start
+                            {% if not n.is_read %}bg-light{% endif %}">
+
+                    <div class="ms-2 me-auto">
+
+                        <div class="fw-bold">
+                            🔔 Notification
+                        </div>
+
+                        <div>
+                            {{ n.message }}
+                        </div>
+
+                        <small class="text-muted">
+                            {{ n.created_at|date:"m/d/Y g:i A" }}
+                        </small>
+
+                    </div>
+
+                    {% if not n.is_read %}
+                        <span class="badge bg-primary rounded-pill">New</span>
+                    {% endif %}
+
+                </div>
+            {% endfor %}
+
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No notifications yet.
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
