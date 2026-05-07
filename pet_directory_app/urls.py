@@ -29,4 +29,9 @@ urlpatterns = [
     path('pet/<int:pet_id>/favorite/', views.toggle_favorite, name='toggle_favorite'),
     path('favorites/', views.favorite_pets, name='favorite_pets'),
     path('notifications/', views.notifications, name='notifications'),
+    path("profile/", views.user_profile, name="user_profile"),
+    path("password-reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
+    path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path("reset/done/", auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path("password-reset/auto/", views.auto_password_reset, name="auto_password_reset"),
 ]

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Profile</h2>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+
+            <a href="{% url 'auto_password_reset' %}" class="btn btn-warning mt-3">
+                Reset Password
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

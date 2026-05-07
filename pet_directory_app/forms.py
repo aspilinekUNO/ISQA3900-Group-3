@@ -103,6 +103,7 @@ class ContactShelterForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)
 
 class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, label="Email")
     become_shelter_admin = forms.BooleanField(
         required=False,
         label="I want to be a shelter admin"
@@ -122,7 +123,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("username", "password1", "password2")
+        fields = ("username", "email", "password1", "password2")
 
     def clean(self):
         cleaned_data = super().clean()

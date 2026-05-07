@@ -1,13 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Pet, Species, Shelter, MedicalRecord, ShelterAdminProfile, Review
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from .forms import PetForm, ShelterForm, CustomUserCreationForm, ContactShelterForm, UserEditForm, AddUserForm, ReviewForm
 from django.http import HttpResponseForbidden
 from django.contrib.auth.models import Group, User
 from django.db.models import Q
 import random
 from django.core.paginator import Paginator
+from django.contrib.auth.forms import PasswordResetForm
+from django.conf import settings
 
 def index(request):
     # Only verified shelters + verified pets
@@ -135,13 +137,24 @@ def pet_medical_records(request, pk):
 
 @login_required
 def pet_create(request):
-    if not request.user.is_authenticated:
-        return HttpResponseForbidden("You must be logged in.")
-    if not (request.user.is_superuser or is_shelter_admin(request.user)):
-        return HttpResponseForbidden("You do not have permission to add pets.")
-    # Unverified admins cannot edit shelter
-    if not request.user.shelteradminprofile.verified:
-        return HttpResponseForbidden("You are not verified.")
+    user = request.user
+
+    # Superusers always allowed
+    if user.is_superuser:
+        profile = None
+    else:
+        # Must be shelter admin
+        if not is_shelter_admin(user):
+            return HttpResponseForbidden("You do not have permission to add pets.")
+        # Must have a profile
+        try:
+            profile = user.shelteradminprofile
+        except ShelterAdminProfile.DoesNotExist:
+            return HttpResponseForbidden("Shelter admin profile missing.")
+        # Must be verified
+        if not profile.verified:
+            return HttpResponseForbidden("You are not verified.")
+
     if request.method == "POST":
         form = PetForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
@@ -285,7 +298,9 @@ def register(request):
     if request.method == "POST":
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+            user.email = form.cleaned_data["email"]
+            user.save()
 
             # Did they choose to become a shelter admin?
             if form.cleaned_data["become_shelter_admin"]:
@@ -343,12 +358,16 @@ def contact_shelter(request, pk):
     if request.method == "POST":
         form = ContactShelterForm(request.POST)
         if form.is_valid():
-            send_mail(
+            user_email = form.cleaned_data["email"]
+            message_body = f"From: {user_email}\n\n{form.cleaned_data['message']}"
+            email = EmailMessage(
                 subject=f"Adoption Inquiry for {pet.name}",
-                message=form.cleaned_data["message"],
-                from_email=form.cleaned_data["email"],
-                recipient_list=[shelter.email],
+                body=message_body,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[shelter.email],
+                reply_to=[user_email],
             )
+            email.send()
             return redirect("pet_detail", pk=pet.pk)
     else:
         form = ContactShelterForm()
@@ -557,20 +576,6 @@ def favorite_pets(request):
     pets = Pet.objects.filter(favorited_by=request.user)
     return render(request, 'favorite_pets.html', {'pets': pets})
 
-def contact(request):
-    pet_name = request.GET.get('pet', '')
-
-    if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        message = request.POST.get("message")
-        print("New Message:")
-        print(name, email, message)
-
-        return redirect("")
-
-    return render(request, "contact.html", {"pet_name": pet_name})
-
 @login_required
 def submit_review(request):
     if request.method == 'POST':
@@ -590,3 +595,25 @@ def notifications(request):
     return render(request, "notifications.html", {
         "notifications": notifications
     })
+
+def user_profile(request):
+    from django.core.mail import send_mail
+    from django.conf import settings
+
+    return render(request, "user_profile.html", {
+        "user": request.user
+    })
+
+@login_required
+def auto_password_reset(request):
+    user = request.user
+    form = PasswordResetForm({"email": user.email})
+
+    if form.is_valid():
+        form.save(
+            request=request,
+            use_https=request.is_secure(),
+            email_template_name="registration/password_reset_email.html",
+        )
+
+    return redirect("password_reset_done")
